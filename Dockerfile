@@ -1,47 +1,18 @@
-ARG NODE_IMAGE=node:12.2-alpine
-ARG WORKDIR=/usr/src/app/
+FROM alpine:3.10.2
 
-FROM ${NODE_IMAGE} as nodebuild
-ARG WORKDIR
+# install ca-certificates so that HTTPS works consistently
+RUN apk add --no-cache ca-certificates
 
-WORKDIR $WORKDIR
+RUN apk add --no-cache --update \
+      git \
+      bash \
+      nodejs \
+      npm \
+      aria2
 
-# Generate node_modules
-COPY package.json \
-     package-lock.json \
-     .babelrc \
-     .eslintrc.js \
-     .eslintignore \
-     .prettierrc \
-     ABOUT.md \
-     $WORKDIR
-RUN apk add --no-cache --virtual=build-dependencies \
-    python build-base && \
-    npm install && \
-    apk del --purge build-dependencies
+RUN npm config set unsafe-perm true
+COPY . .
+RUN npm install
+RUN npm run build
 
-# Build static assets and remove devDependencies.
-COPY client ./client
-COPY server ./server
-COPY shared ./shared
-COPY scripts ./scripts
-COPY config.docker.js ./config.js
-RUN npm run build && \
-    npm prune --production
-
-# Now get the clean image without any dependencies and copy compiled app
-FROM ${NODE_IMAGE} as flood
-ARG WORKDIR
-
-WORKDIR $WORKDIR
-
-# Install runtime dependencies.
-RUN apk --no-cache add \
-    mediainfo
-
-COPY --from=nodebuild $WORKDIR $WORKDIR
-
-# Hints for consumers of the container.
-EXPOSE 3000
-VOLUME ["/data"]
-
+      
