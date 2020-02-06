@@ -45,5 +45,3 @@ COPY --from=nodebuild $WORKDIR $WORKDIR
 EXPOSE 3000
 VOLUME ["/data"]
 
-# Start application.
-CMD [ "npm", "start" ]
