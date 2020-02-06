@@ -23,7 +23,7 @@ const CONFIG = {
   // If you want to connect to Flood from hosts other that the one it is running
   // on, you should change this value.
   // To listen on all interfaces, change to `floodServerHost: '0.0.0.0'`..
-  floodServerHost: '127.0.0.1',
+  floodServerHost: '0.0.0.0',
   // The port that Flood should listen for web connections on.
   floodServerPort: 3000,
   // Used for development. See the "Local Development" section of README.md
