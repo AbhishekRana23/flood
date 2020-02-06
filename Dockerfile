@@ -14,5 +14,5 @@ RUN npm config set unsafe-perm true
 COPY . .
 RUN npm install
 RUN npm run build
-
+RUN npm start
       
